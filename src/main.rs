@@ -1,6 +1,8 @@
 use std::io;
 use std::fs::File;
 use std::io::Read;
+use std::io::Write;
+use std::fs::OpenOptions;
 use mysql::*;
 
 struct Password {
@@ -9,7 +11,7 @@ struct Password {
     isEncrypted: bool,
 }
 
-pub fn load_password(website: &String) -> Result<()> {
+pub fn load_password(website: String) -> Result<()> {
     let mut file = File::open("passwords.txt")?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
@@ -27,8 +29,10 @@ pub fn change_password() {
 
 }
 
-pub fn create_password() {
-
+pub fn create_password(website: String, password: String) -> Result<()> {
+    let mut file = OpenOptions::new().append(true).open("passwords.txt").unwrap();
+    write!(file, "\n{}:{}", website.trim(), password.trim());
+    Ok(())
 }
 
 fn main() -> io::Result<()> {
@@ -44,10 +48,16 @@ fn main() -> io::Result<()> {
             println!("Please provide the website you want your password from: ");
             let mut website = String::new();
             io::stdin().read_line(&mut website)?;
-            let _ = load_password(&website);
+            let _ = load_password(website);
         },
         2 => {
-            create_password();
+            let mut website = String::new();
+            let mut password = String::new();
+            println!("Website name: ");
+            io::stdin().read_line(&mut website);
+            println!("Password: ");
+            io::stdin().read_line(&mut password);
+            create_password(website, password);
         },
         3 => {
             change_password();
