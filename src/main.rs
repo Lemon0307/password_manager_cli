@@ -5,11 +5,7 @@ use std::io::Write;
 use std::fs::OpenOptions;
 use mysql::*;
 
-struct Password {
-    username: String,
-    password: String,
-    isEncrypted: bool,
-}
+//TODO: implement enecryption and hashing
 
 pub fn load_password(website: String) -> Result<()> {
     let mut file = File::open("passwords.txt")?;
@@ -25,13 +21,13 @@ pub fn load_password(website: String) -> Result<()> {
     Ok(())
 }
 
-pub fn change_password() {
-
+pub fn change_password(website: String) -> Result<()> {
+    Ok(())
 }
 
 pub fn create_password(website: String, password: String) -> Result<()> {
     let mut file = OpenOptions::new().append(true).open("passwords.txt").unwrap();
-    write!(file, "\n{}:{}", website.trim(), password.trim());
+    write!(file, "{}:{}\n", website.trim(), password.trim());
     Ok(())
 }
 
@@ -57,10 +53,16 @@ fn main() -> io::Result<()> {
             io::stdin().read_line(&mut website);
             println!("Password: ");
             io::stdin().read_line(&mut password);
-            create_password(website, password);
+            let _ = create_password(website, password);
         },
         3 => {
-            change_password();
+            let mut website = String::new();
+            let mut password = String::new();
+            println!("Website name: ");
+            io::stdin().read_line(&mut website);
+            println!("Password: ");
+            io::stdin().read_line(&mut password);
+            let _ = change_password(website, password);
         },
         0_u8 | 4_u8..=u8::MAX => todo!(),
     };
