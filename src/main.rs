@@ -1,4 +1,6 @@
 use std::io;
+use std::fs::File;
+use std::io::Read;
 use mysql::*;
 
 struct Password {
@@ -7,15 +9,25 @@ struct Password {
     isEncrypted: bool,
 }
 
-pub fn loadPassword() {
+pub fn load_password(website: &String) -> Result<()> {
+    let mut file = File::open("passwords.txt")?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+    let lines = contents.split("\n");
+    for line in lines {
+        let x = line.split(":").collect::<Vec<&str>>();
+        if x[0].to_lowercase() == website.trim().to_lowercase() {
+            println!("{}", x[1]);
+        }
+    }
+    Ok(())
+}
+
+pub fn change_password() {
 
 }
 
-pub fn changePassword() {
-
-}
-
-pub fn createPassword() {
+pub fn create_password() {
 
 }
 
@@ -29,13 +41,16 @@ fn main() -> io::Result<()> {
     let option = buffer.trim().parse::<u8>().unwrap();
     match option {
         1 => {
-            loadPassword();
+            println!("Please provide the website you want your password from: ");
+            let mut website = String::new();
+            io::stdin().read_line(&mut website)?;
+            let _ = load_password(&website);
         },
         2 => {
-            createPassword();
+            create_password();
         },
         3 => {
-            changePassword();
+            change_password();
         },
         0_u8 | 4_u8..=u8::MAX => todo!(),
     };
