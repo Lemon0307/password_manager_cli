@@ -18,7 +18,7 @@ pub fn join_2D_vector(v: &Vec<Vec<&str>>) -> String {
 pub fn load_password(website: String) -> Result<()> {
     let mut file = File::open("passwords.txt")?;
     let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
+    let _ = file.read_to_string(&mut contents)?;
     let lines = contents.split("\n");
     for line in lines {
         let x = line.split(":").collect::<Vec<&str>>();
